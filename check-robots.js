@@ -1,30 +1,39 @@
 (function() {
-  // Перевірка тегів meta name="robots"
-  var metaTags = document.getElementsByTagName('meta');
-  var robotsMeta = null;
-  
-  for (var i = 0; i < metaTags.length; i++) {
-    if (metaTags[i].getAttribute('name') === 'robots') {
-      robotsMeta = metaTags[i].getAttribute('content');
-      break;
+  // Функція для перевірки тегів meta name="robots"
+  function checkMetaRobots() {
+    var metaTags = document.getElementsByTagName('meta');
+    for (var i = 0; i < metaTags.length; i++) {
+      if (metaTags[i].getAttribute('name') === 'robots') {
+        return 'Meta robots: ' + metaTags[i].getAttribute('content');
+      }
     }
+    return null;
   }
 
-  if (robotsMeta) {
-    alert('Meta robots: ' + robotsMeta);
-  } else {
-    // Перевірка файлу robots.txt
+  // Функція для перевірки файлу robots.txt
+  function checkRobotsTxt(callback) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', '/robots.txt', true);
     xhr.onreadystatechange = function() {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
-          alert('robots.txt:\n' + xhr.responseText);
+          callback('robots.txt:\n' + xhr.responseText);
         } else {
-          alert('No robots.txt found.');
+          callback('No robots.txt found.');
         }
       }
     };
     xhr.send();
+  }
+
+  // Виконання перевірки метатегів
+  var metaResult = checkMetaRobots();
+  if (metaResult) {
+    alert(metaResult);
+  } else {
+    // Якщо метатег не знайдено, перевіряємо robots.txt
+    checkRobotsTxt(function(result) {
+      alert(result);
+    });
   }
 })();
